@@ -1,0 +1,9 @@
+kdtree: kdtree.c
+	g++ kdtree.c -o kdtree -std=c++11
+
+run:
+	./kdtree < kdtree.in
+
+clean:
+	rm ./kdtree
+
