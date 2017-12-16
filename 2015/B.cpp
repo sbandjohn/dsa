@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef long long LL;
+
+const int maxn = 100010;
+const int maxv = 110;
+
+int lnk[maxn],sz[maxn];
+
+int find(int x){
+	int y,k;
+	for (y=x; y!=lnk[y]; y=lnk[y]) ;
+	for (; x!=y; k=lnk[x], lnk[x]=y, x=k) ;
+	return y;
+}
+
+class Edge{
+public:
+	int x,y,z;
+	bool operator < (const Edge& p) const{
+		return z<p.z;
+	}
+}edge[maxn];
+
+int get(){
+	LL ans = 0;
+	int n;
+	scanf("%d",&n);
+	for (int i=1;i<=n;++i) lnk[i]=i,sz[i]=1;
+	for (int i=1;i<n;++i) scanf("%d%d%d",&edge[i].x,&edge[i].y,&edge[i].z);
+	sort(edge+1,edge+1+n-1);
+	for (int i=1;i<n;++i){
+		int x = edge[i].x, y = edge[i].y;
+		int a = find(x), b = find(y);
+		ans+=(LL)(edge[i].z+1)*(sz[a]*sz[b]-1);
+		lnk[b]=a;
+		sz[a]+=sz[b];
+	}
+	cout<<ans<<endl;
+	return 1;
+}
+
+int main(){
+	int T;
+	cin>>T;
+	while (T--) get();
+	return 0;
+}

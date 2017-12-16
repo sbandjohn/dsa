@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int maxn = 110;
+
+char s[maxn];
+
+bool first;
+
+int work(){
+	char s[10];
+	int d;
+	scanf("%s%d",s,&d);
+	if (d==0){
+		
+	}
+}
+
+class Node{
+public:
+	string s;
+	int d;
+	vector<Node*> ch;
+	Node(string s_, int d_):s(s_),d(d_),ch(d_){}
+};
+
+void postTravel(Node* x){
+	for (int i=0;i<x->d;++i) postTravel(x->ch[i]);
+	if (first) first = false;
+	else cout<<' ';
+	cout<< x->s ;	
+}
+
+int get(){
+	string s;
+	int d;
+	cin>>s>>d;
+	Node* root = new Node(s,d);
+	queue<Node*> que;
+	que.push(root);
+	while (!que.empty()){
+		Node* x = que.front();
+		que.pop();
+		for (int i=0;i<x->d;++i){
+			cin>>s>>d;
+			Node* y = new Node(s,d);
+			x->ch[i] = y;
+			que.push(y);
+		}
+	}
+	postTravel(root);
+	return 1;
+}
+
+int main(){
+	int T;
+	first = true;
+	cin>>T;
+	while (T--) get();
+	cout<<endl;
+	return 0;
+}

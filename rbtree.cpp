@@ -14,6 +14,8 @@
 #define RED 1
 using namespace std;
 
+typedef long long LL;
+
 class RBTree{
 private:
 	class Node{
@@ -116,9 +118,82 @@ private:
 		if (p == nil) return ;
 		show(p->ch[0]);
 		printf("%d %d  %lx lc:%lx  rc:%lx  p:%lx\n",
-				p->v, p->color, (long)p, 
-				(long)p->ch[0], (long)p->ch[1], (long)p->p);
+				p->v, p->color, (LL)p, 
+				(LL)p->ch[0], (LL)p->ch[1], (LL)p->p);
 		show(p->ch[1]);
+	}
+	
+	Node *succ(Node *z){
+		assert(z != nil);
+		for (z = z->ch[1]; z->ch[0] != nil; z = z->ch[0]) ;
+		return z;
+	}
+	
+	void del(Node *z){
+		Node *y, *x;
+		if (z->ch[0] == nil || z->ch[1] == nil)
+			y = z;
+		else
+			y = succ(z);
+		if (y->ch[0] != nil)
+			x = y->ch[0];
+		else
+			x = y->ch[1];
+		x->p = y->p;
+		if (y->p == nil){
+			root = x;
+		}else{
+			int d = which(y);
+			y->p->ch[d] = x;
+		}
+		if (y != z)
+			z->v = y->v;
+		if (y->color == BLACK)
+			delFix(x);
+		delete y;
+	}
+	
+	void delFix(Node *x){
+		while (x!=root && x->color == BLACK){
+			Node *p = x->p;
+			int d = which(x);
+			Node *w = p->ch[d^1];
+			if (w->color == RED){
+				w->color = BLACK;
+				p->color = RED;
+				rotate(p, d);
+				w = p->ch[d^1];
+			}
+			if (w->ch[0]->color == BLACK && w->ch[1]->color == BLACK){
+				w->color = RED;
+				x = x->p;
+			}else{
+				if (w->ch[d^1]->color == BLACK){
+					rotate(w, d^1);
+					w->p->color = BLACK;
+					w->color = RED;
+					w = w->p;
+				}
+				rotate(p, d);
+				w->color = p->color;
+				p->color = BLACK;
+				w->ch[d^1]->color = BLACK;
+				x = root;
+			}
+		}
+		x->color = BLACK;
+	}
+	
+	Node *findDir(Node *x, int d){
+		if (x == nil) return nil;
+		while (x->ch[d] != nil) x = x->ch[d];
+		return x;
+	}
+	
+	Node *find(Node *x, int v){
+		if (x == nil) return nil;
+		if (v == x->v) return x;
+		return find(x->ch[v > x->v], v);
 	}
 
 public:
@@ -144,12 +219,38 @@ public:
 	void check(){
 		assert(nil->ch[0] == nil);
 		assert(nil->ch[1] == nil);
-		assert(nil->p == nil);
 		check(root);
 	}
 
 	void show(){
 		show(root);
+	}
+	
+	int getDir(int d){
+		Node *tmp = findDir(root, d);
+		if (tmp == nil){
+			cout<<"Tree empty"<<endl;
+			return -1;
+		}
+		return tmp->v;
+	}
+	
+	void delDir(int d){
+		Node *tmp = findDir(root, d);
+		if (tmp == nil){
+			cout<<"Tree empty"<<endl;
+			return ;
+		}
+		del(tmp);
+	}
+	
+	void delValue(int v){
+		Node *tmp = find(root, v);
+		if (tmp == nil){
+			cout<<"No such point to delete:"<<v<<endl;
+			return ;
+		}
+		del(tmp);
 	}
 
 };
@@ -160,8 +261,19 @@ int main(){
 	cin>>n;
 	while (n--){
 		int a;
-		cin>>a;
-		rbTree.insert(a);
+		int op;
+		cin>>op>>a;
+		if (op == 1) 
+			rbTree.insert(a);
+		else if (op == 2){
+			cout<<rbTree.getDir(a)<<endl;
+		}else if (op == 3){
+			rbTree.delDir(a);
+		}else if (op == 4){
+			rbTree.delValue(a);
+		}
+		rbTree.show();
+		cout<<endl;
 		rbTree.check();
 	};
 	rbTree.show();

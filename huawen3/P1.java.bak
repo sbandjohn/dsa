@@ -1,0 +1,13 @@
+import java.io.*;
+
+public class P1{
+	public static void main(String[] args){
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+		while (n-->0){
+			String str = in.nextLine();
+			System.out.println(str);
+		}
+		return 0;
+	}
+}
