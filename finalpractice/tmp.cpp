@@ -1,0 +1,16 @@
+#include <iostream>
+using namespace std;
+
+int a = 1;
+int b = 2;
+
+int modify(int *(&p)){
+	p = &a;
+}
+int main(){
+	int *p = &b;
+	cout<<(*p)<<endl;
+	modify(p);
+	cout<<(*p)<<endl;
+	return 0;
+}
